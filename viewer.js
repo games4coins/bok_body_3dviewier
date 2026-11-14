@@ -106,10 +106,31 @@ function show(object, name) {
   fit();
 }
 
-function demo() {
+function fallbackDemo() {
   loadId++;
   const sample = new THREE.Mesh(new THREE.TorusKnotGeometry(0.75, 0.26, 160, 24), surface);
   show(sample, 'Демонстрационная модель');
+}
+
+async function demo() {
+  const current = ++loadId;
+  const status = get('status');
+  status.textContent = 'Загружается модель BOK Body…';
+  try {
+    const response = await fetch(new URL('./test.obj.gz', import.meta.url));
+    if (!response.ok || !response.body) throw new Error('HTTP ' + response.status);
+    const stream = response.body.pipeThrough(new DecompressionStream('gzip'));
+    const blob = await new Response(stream).blob();
+    if (current !== loadId) return;
+    await load(new File([blob], 'test.obj'));
+    if (current + 1 === loadId && !status.textContent) {
+      get('model-name').textContent = 'Демонстрационная модель BOK Body';
+    }
+  } catch (error) {
+    if (current !== loadId) return;
+    console.error(error);
+    status.textContent = 'Не удалось загрузить демомодель. Попробуйте ещё раз или откройте свой файл.';
+  }
 }
 
 async function load(file) {
@@ -196,6 +217,7 @@ stage.addEventListener('drop', event => {
 });
 resize();
 updateLighting();
+fallbackDemo();
 demo();
 get('open').disabled = false;
 get('demo').disabled = false;
