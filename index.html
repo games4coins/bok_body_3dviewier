@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Просмотр STL и OBJ моделей в браузере">
+<title>BOK Body · 3D-просмотрщик</title>
+<link rel="stylesheet" href="./style.css">
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.179.1/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.179.1/examples/jsm/"}}
+</script>
+</head>
+<body>
+<header><span class="brand"><b>BOK</b> BODY</span><span>Мастерская шарнирных тел</span></header>
+<main>
+  <h1>3D-просмотрщик</h1>
+  <p class="lead">Откройте STL или OBJ, чтобы рассмотреть форму и детали модели.</p>
+  <div class="workspace">
+    <section id="stage" aria-label="Область просмотра 3D-модели">
+      <span class="viewport-label">3D-вид</span>
+      <div class="tools" aria-label="Управление камерой">
+        <button id="plus" aria-label="Приблизить">+</button>
+        <button id="minus" aria-label="Отдалить">−</button>
+        <button id="fit">Вписать</button>
+      </div>
+      <p id="status" role="status">Загружается 3D-просмотрщик…</p>
+    </section>
+    <aside>
+      <div class="panel">
+        <h2>Модель</h2>
+        <button id="open" class="primary" disabled>Открыть STL / OBJ</button>
+        <input id="file" type="file" accept=".stl,.obj" hidden>
+        <p id="model-name">Демонстрационная модель</p>
+        <button id="demo" disabled>Показать демомодель</button>
+      </div>
+      <div class="panel">
+        <h2>Освещение</h2>
+        <label for="preset">Схема света</label>
+        <select id="preset">
+          <option value="studio">Студийное</option>
+          <option value="side">Боковое для рельефа</option>
+          <option value="soft">Мягкое рассеянное</option>
+        </select>
+        <label for="strength">Яркость <output id="percent">100%</output></label>
+        <input id="strength" type="range" min="25" max="200" value="100">
+        <label for="angle">Угол света <output id="degrees">45°</output></label>
+        <input id="angle" type="range" min="0" max="360" value="45">
+      </div>
+    </aside>
+  </div>
+  <footer><span>Вращение — перетаскивание. Зум — колёсико или жест двумя пальцами.</span><span>Файлы обрабатываются в браузере.</span></footer>
+</main>
+<script type="module">
+import('./viewer.js').catch(error => {
+  console.error(error);
+  document.querySelector('#status').textContent = 'Не удалось запустить 3D-просмотр. Проверьте подключение и поддержку WebGL 2.';
+});
+</script>
+</body>
+</html>
